@@ -15,7 +15,51 @@
   <script type="text/javascript" src="helpers/renderers.lib.js"></script>
   <script type="text/javascript">
 
-// Welcome to TorontoJS Workshop :) 
+// Welcome to TorontoJS Workshop :)
+//Thank you so much
+class Neuron {
+  bias;
+  weights;
+  activatorFn;
+
+  constructor (weights = [], bias = 0, activateFn) {
+    this.bias = bias;
+    this.weights = weights;
+    this.activatorFn = activateFn
+  }
+
+  sum (inputs = []) {
+    let buffer = [];
+    let output - 0;
+
+    for (let i in inputs) {
+      buffer[i] =  inputs[i] * this.weights[i]
+    }
+
+    for (let b in buffer) {
+      output += buffer[b]
+    }
+    output += this.bias
+
+    return output
+  }
+
+  fire (inputs = []) {
+    let output = 0;
+    output = this.sum(inputs);
+
+    let result = this.activatorFn(output);
+
+    return result
+  }
+}
+
+const w = [1];
+
+const b = 4;
+
+const n = new Neuron(w, b, Math.sigmoid)
+
 
   </script>
 </body>
