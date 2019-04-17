@@ -17,6 +17,47 @@
 
 // Welcome to TorontoJS Workshop :)
 //Thank you so much
+const H1 = 0;
+const H2 = 1;
+const O1 = 2;
+
+const W1 = 0;
+const W2 = 1;
+const W3 = 2;
+const W4 = 3;
+const W5 = 4;
+const W6 = 5;
+
+const T1 = 0;
+const T2 = 1;
+
+class Network {
+  biases = [];
+  weights = [];
+
+  hidden = [];
+  output;
+
+  constructor(weights = [], biases = [], activatorFn) {
+    this.weights = weights;
+    this.biases = biases;
+
+    this.hidden = [
+      new Neuron([this.weights[W1], this.weights[W2]], this.biases[H1], activatorFn),
+      new Neuron([this.weights[W3], this.weights[W4]], this.biases[H2], activatorFn)
+    ];
+    this.output = new Neuron([this.weights[W5], this.weights[W6]], this.biases[O1], activatorFn)
+  }
+
+  query (inputs = []) {
+    let params = [];
+    for (let h in this.hidden) {
+      params.push(this.hidden[h].fire(inputs));
+    }
+    return this.output.fire(params)
+  }
+}
+
 class Neuron {
   bias;
   weights;
@@ -54,18 +95,19 @@ class Neuron {
   }
 }
 
-const w = [1];
+const w = [0, 1, 0, 1, 0, 1];
 
-const b = 4;
+const b = [0, 0, 0];
 
-const n = new Neuron(w, b, Math.sigmoid)
+const nn = new Network(w, b, Math.sigmoid)
 
-const x = [2];
+const x = [2, 3];
 
-console.log('run neuron against input', n.fire(x))
+console.log('run neuron against input', nn.query(x))
 
 
   </script>
 </body>
 
 </html>
+<!-- we puttin some cool partial deriv things in here -->
