@@ -49,6 +49,77 @@ class Network {
     this.output = new Neuron([this.weights[W5], this.weights[W6]], this.biases[O1], activatorFn)
   }
 
+  train (data = [], answers = [], iterations = 1000, rate = 0.1) {
+    for (let i = 0; i < iterations; i += 1) {
+      for (let d in data) {
+        let h1Sum = this.hidden[H1].sum(data[d]);
+        let h1 = this.hidden[H1].activatorFn(h1Sum);
+
+        let h2Sum = this.hidden[H2].sum(data[d]);
+        let h2 = this.hidden[H2].activatorFn(h2Sum)
+
+        let o1Sum = this.output.sum([h1, h2]);
+        let o1 = this.output.activatorFn(o1Sum)
+
+        let pred = o1;
+
+        let  pLpO1 = -2 * (answers[d] - pred);
+
+        let pO1pW6 = h1 * Math.derivSigmoid(o1Sum);
+        let pO1pW5 = h2 * Math.derivSigmoid(o1Sum);
+
+        let pO1pB3 = Math.derivSigmoid(o1Sum);
+
+        let pO1pH1 = this.weights[W5] * Math.derivSigmoid(o1Sum);
+        let pO1pH2 = this.weights[W6] * Math.derivSigmoid(o1Sum);
+
+        let pH1pW1 = data[d][I1] * Math.derivSigmoid(h1Sum);
+        let pH1pW2 = data[d][I2] * Math.derivSigmoid(h1Sum);
+
+        let pH1pB1 = Math.derivSigmoid(h1Sum);
+
+        let pH2pW3 = data[d][I1] * Math.derivSigmoid(h2Sum);
+        let pH2pW4 = data[d][I2] * Math.derivSigmoid(h2Sum);
+
+        let pH2pB2 = Math.derivSigmoid(h2Sum);
+
+        this.weights[W1] -= rate * pLp01 * pO1pH1 * pH1pW1;
+        this.weights[W2] -= rate * pLp01 * pO1pH1 * pH1pW1;
+
+        this.weights[W3] -= rate * pLp01 * pO1pH2 * pH2pW3;
+        this.weights[W4] -= rate * pLp01 * pO1pH2 * pH2pW4;
+
+        this.weights[W5] -= rate * pLpO1 * pO1pW5;
+        this.weights[W6] -= rate * pLpO1 * pO1pW6;
+
+        this.biases[H1] -= rate * pLpO1 * pO1pH1 * pH1pB1;
+        this.biases[H2] -= rate * pLpO1 * pO1pH2 * pH2pB2;
+        this.biases[O1] -= rate * pLpO1 * pO1pB3;
+
+        this.out.weights = [
+          this.weights[W5],
+          this.weights[W6],
+        ];
+
+        this.output.bias = this.biases[O1];
+        this.hidden[H1] = [
+          this.weights[W1],
+          this.weights[W2],
+        ];
+
+        this.hidden[H1].bias = this.biases[H1];
+
+        this.hidden[H2].weights = [
+          this.weights[W3],
+          this.weights[W4]
+        ]
+
+        this.hidden[H2].bias = this.biases[H2];
+
+      }
+    }
+  }
+
   query (inputs = []) {
     let params = [];
     for (let h in this.hidden) {
